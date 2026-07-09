@@ -1,9 +1,9 @@
 # 난임 환자 임신 성공 여부 예측 모델 미니 프로젝트
 
-# EDA 전처리 코드
-# 핵심 코드 요약
+<details>
+<summary><b>EDA 전처리 핵심 코드 요약</b></summary>
 
-# 여부(0/1) 컬럼
+**여부(0/1) 컬럼**
 for col in binary_columns:
 
     if col in train.columns:
@@ -18,7 +18,7 @@ for col in binary_columns:
             .astype("Int64")
         )
 
-# 소수점 컬럼 -> int64
+**소수점 컬럼 -> int64**
 for col in numeric_columns:
 
     if col in train.columns:
@@ -33,7 +33,7 @@ for col in numeric_columns:
             .astype("Int64")
         )
 
-# 횟수 컬럼 
+**횟수 컬럼** 
 for col in count_columns:
 
     if col in train.columns:
@@ -50,7 +50,7 @@ for col in count_columns:
             .astype("Int64")
         )
         
-# 특정 시술 유형 Feature engineering
+**특정 시술 유형 Feature engineering**
 for df in [train, test]:
 
     # -------------------------
