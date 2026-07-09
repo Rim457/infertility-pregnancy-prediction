@@ -4,7 +4,7 @@
 <summary><b>EDA 전처리 핵심 코드 요약</b></summary>
 
 **여부(0/1) 컬럼**
-
+<br>
 '''python
 for col in binary_columns:
 
@@ -19,7 +19,7 @@ for col in binary_columns:
             pd.to_numeric(test[col], errors="coerce")
             .astype("Int64")
         )
-
+        
 **소수점 컬럼 -> int64**
 for col in numeric_columns:
 
