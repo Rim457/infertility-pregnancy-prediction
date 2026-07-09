@@ -4,6 +4,7 @@
 <summary><b>EDA 전처리 핵심 코드 요약</b></summary>
 
 **여부(0/1) 컬럼**
+
 '''python
 for col in binary_columns:
 
