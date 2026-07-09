@@ -204,3 +204,150 @@ base_clf.fit(X_train, y_train)
 print("1차 모델링 학습 완료!\n")
 ```
 </details>
+
+<details>
+<summary><b>성능 고도화 코드 요약</b></summary>
+
+**XGBoost**
+```
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import roc_auc_score
+import xgboost as xgb
+
+param_dist = {
+    'max_depth': [4, 5, 6, 7],
+    'learning_rate': [0.03, 0.05, 0.1],
+    'n_estimators': [200, 300],
+    'subsample': [0.8, 0.9, 1.0],
+    'colsample_bytree': [0.8, 0.9, 1.0],
+}
+
+base_model = xgb.XGBClassifier(
+    objective='binary:logistic', eval_metric='auc',
+    enable_categorical=True, tree_method='hist',
+    random_state=42,
+    n_jobs=-1
+)
+
+search = RandomizedSearchCV(
+    base_model, param_distributions=param_dist,
+    n_iter=6,
+    scoring='roc_auc',
+    cv=2,
+    random_state=42,
+    n_jobs=1,
+    verbose=3
+)
+search.fit(X_train, y_train)
+```
+**CatBoost**
+```
+model1 = CatBoostClassifier(
+
+    iterations=1000,
+    learning_rate=0.03,
+
+    depth=8,
+
+    l2_leaf_reg=5,
+
+    bagging_temperature=1,
+
+    random_strength=1,
+
+    loss_function="Logloss",
+    eval_metric="AUC",
+
+    random_seed=42,
+
+    verbose=100
+)
+
+model1.fit(
+
+    X_train,
+    y_train,
+
+    cat_features=categorical_cols,
+
+    eval_set=(X_valid, y_valid),
+
+    use_best_model=True
+)
+
+pred1 = model1.predict_proba(X_valid)[:,1]
+
+auc1 = roc_auc_score(y_valid, pred1)
+```
+```
+import optuna
+
+from catboost import CatBoostClassifier
+
+from sklearn.metrics import roc_auc_score
+     
+
+def objective(trial):
+
+    params = {
+
+        "iterations": trial.suggest_int("iterations", 500, 1500),
+
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.05),
+
+        "depth": trial.suggest_int("depth", 5, 8),
+
+        "l2_leaf_reg": trial.suggest_int("l2_leaf_reg", 3, 10),
+
+        "bagging_temperature": trial.suggest_float("bagging_temperature", 0, 5),
+
+        "random_strength": trial.suggest_int("random_strength", 0, 5),
+
+        "loss_function": "Logloss",
+
+        "eval_metric": "AUC",
+
+        "random_seed": 42,
+
+        "verbose": False
+
+    }
+
+    model = CatBoostClassifier(**params)
+
+    model.fit(
+
+        X_train,
+
+        y_train,
+
+        cat_features=categorical_cols,
+
+        eval_set=(X_valid, y_valid),
+
+        use_best_model=True,
+
+        early_stopping_rounds=100
+
+    )
+
+    pred = model.predict_proba(X_valid)[:,1]
+
+    auc = roc_auc_score(y_valid,pred)
+
+    return auc
+```
+**LGBM**
+```
+grid_clf = RandomizedSearchCV(
+    lgbm_clf,
+    param_distributions=param_grid,
+    n_iter=10,             
+    cv=StratifiedKFold(3),
+    scoring='accuracy',
+    n_jobs=-1,             
+    random_state=42,
+    verbose=1              
+)
+grid_clf.fit(X_train, y_train)
+```
