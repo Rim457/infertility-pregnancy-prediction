@@ -134,3 +134,61 @@ for df in [train, test]:
         technique_count
         .astype("Int64")
     )
+
+
+<details>
+<summary><b>1차 베이스라인 구축 코드 요약</b></summary>
+
+**XGBoost**
+import xgboost as xgb
+from sklearn.metrics import roc_auc_score
+
+model = xgb.XGBClassifier(
+    objective='binary:logistic',
+    eval_metric='auc',
+    enable_categorical=True,
+    tree_method='hist',
+    random_state=42,
+    n_estimators=500
+)
+
+model.fit(X_train, y_train, eval_set=[(X_valid, y_valid)], verbose=False)
+
+valid_pred = model.predict_proba(X_valid)[:, 1]
+print('Validation ROC-AUC:', roc_auc_score(y_valid, valid_pred))
+
+**CatBoost**
+from sklearn.metrics import roc_auc_score
+
+model = CatBoostClassifier(
+    iterations=500,
+    learning_rate=0.05,
+    depth=6,
+    loss_function="Logloss",
+    eval_metric="AUC",
+    random_seed=42,
+    verbose=100
+)
+
+model.fit(
+    X_train,
+    y_train,
+    cat_features=categorical_cols,
+    eval_set=(X_valid, y_valid),
+    use_best_model=True
+)
+
+pred = model.predict_proba(X_valid)[:, 1]
+
+auc = roc_auc_score(y_valid, pred)
+
+**LGBM**
+base_clf = LGBMClassifier(
+    random_state=42,
+    verbose=-1
+)
+
+# 1차 모델 학습 시작
+base_clf.fit(X_train, y_train)
+print("1차 모델링 학습 완료!\n")
+
