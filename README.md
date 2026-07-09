@@ -142,6 +142,8 @@ for df in [train, test]:
     )
 
 ```
+</details>
+
 <details>
 <summary><b>1차 베이스라인 구축 코드 요약</b></summary>
 
@@ -201,3 +203,4 @@ base_clf = LGBMClassifier(
 base_clf.fit(X_train, y_train)
 print("1차 모델링 학습 완료!\n")
 ```
+</details>
