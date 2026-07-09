@@ -5,7 +5,7 @@
 
 **여부(0/1) 컬럼**
 <br>
-'''python
+'''
 for col in binary_columns:
 
     if col in train.columns:
@@ -19,6 +19,7 @@ for col in binary_columns:
             pd.to_numeric(test[col], errors="coerce")
             .astype("Int64")
         )
+'''
         
 **소수점 컬럼 -> int64**
 for col in numeric_columns:
